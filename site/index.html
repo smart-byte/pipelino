@@ -9,7 +9,9 @@
       content="A staged processing pipeline for the browser and Node: per-stage concurrency, batching, pause and cancel, live progress. Zero dependencies, 2.6 kB gzipped."
     />
     <meta name="theme-color" content="#f8f9f5" />
+    <link rel="canonical" href="https://pipelino.dev/" />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pipelino.dev/" />
     <meta property="og:title" content="pipelino — Give your async work a sense of flow." />
     <meta
       property="og:description"
@@ -78,7 +80,13 @@
             <svg class="icon icon-moon" aria-hidden="true"><use href="#icon-moon" /></svg
             ><svg class="icon icon-sun" aria-hidden="true"><use href="#icon-sun" /></svg>
           </button>
-          <a href="https://github.com/smart-byte/pipelino" class="button secondary small" aria-label="pipelino on GitHub"
+          <a
+            href="https://github.com/smart-byte/pipelino"
+            class="button secondary small"
+            aria-label="pipelino on GitHub"
+            data-umami-event="outbound"
+            data-umami-event-place="nav"
+            data-umami-event-to="github"
             ><svg class="icon" aria-hidden="true"><use href="#icon-github" /></svg><span>GitHub</span></a
           >
         </div>
@@ -99,7 +107,15 @@
         <div class="actions">
           <a href="#quick-start" class="button primary"
             >Get started<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg></a
-          ><button type="button" class="install" data-copy="npm install pipelino" aria-label="Copy npm install pipelino">
+          ><button
+            type="button"
+            class="install"
+            data-copy="npm install pipelino"
+            aria-label="Copy npm install pipelino"
+            data-umami-event="copy"
+            data-umami-event-place="hero"
+            data-umami-event-item="npm install pipelino"
+          >
             <span aria-hidden="true">$</span><code>npm install pipelino</code><svg class="icon" aria-hidden="true"><use href="#icon-copy" /></svg
             ><span class="copy-feedback" aria-hidden="true">Copied</span>
           </button>
@@ -129,7 +145,7 @@
             <div class="run-controls">
               <button type="button" class="text-button" id="reset" disabled>Reset</button
               ><button type="button" class="button secondary" id="pause" disabled>Pause</button
-              ><button type="button" class="button primary" id="run">
+              ><button type="button" class="button primary" id="run" data-umami-event="demo" data-umami-event-action="run">
                 <svg class="icon" aria-hidden="true"><use href="#icon-play" /></svg><span>Run</span>
               </button>
             </div>
@@ -210,7 +226,14 @@
           <div class="code-window">
             <div class="code-toolbar">
               <span>upload.ts</span
-              ><button type="button" id="copy-code" aria-label="Copy the example">
+              ><button
+                type="button"
+                id="copy-code"
+                aria-label="Copy the example"
+                data-umami-event="copy"
+                data-umami-event-place="quick-start"
+                data-umami-event-item="example"
+              >
                 <svg class="icon" aria-hidden="true"><use href="#icon-copy" /></svg><span>Copy</span>
               </button>
             </div>
@@ -436,7 +459,12 @@ pipeline.<span class="fn">push</span>(photos);</code></pre>
           <div class="section-head">
             <h2 id="benchmark-title">60,000 stage runs in 10 ms</h2>
             <p><span>20,000 items through three no-op stages.</span> <span>The scheduler is never the bottleneck.</span></p>
-            <a href="https://github.com/smart-byte/pipelino/blob/main/BENCHMARKS.md" class="text-link"
+            <a
+              href="https://github.com/smart-byte/pipelino/blob/main/BENCHMARKS.md"
+              class="text-link"
+              data-umami-event="outbound"
+              data-umami-event-place="benchmark"
+              data-umami-event-to="benchmarks"
               >Method and full results<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
             ></a>
           </div>
@@ -555,7 +583,7 @@ pipeline.<span class="fn">push</span>(photos);</code></pre>
           <h2 id="pair-title">Pairs with imagefast</h2>
           <p>Read dimensions and make thumbnails on a worker pool in the browser, then let pipelino batch the uploads.</p>
         </div>
-        <a href="https://imagefast.dev" class="button secondary"
+        <a href="https://imagefast.dev" class="button secondary" data-umami-event="outbound" data-umami-event-place="pair" data-umami-event-to="imagefast"
           >Meet imagefast<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
         ></a>
       </section>
@@ -563,10 +591,23 @@ pipeline.<span class="fn">push</span>(photos);</code></pre>
       <section class="closing wrap" aria-labelledby="closing-title">
         <h2 id="closing-title">Add it to your app</h2>
         <div class="actions">
-          <button type="button" class="install" data-copy="npm install pipelino" aria-label="Copy npm install pipelino">
+          <button
+            type="button"
+            class="install"
+            data-copy="npm install pipelino"
+            aria-label="Copy npm install pipelino"
+            data-umami-event="copy"
+            data-umami-event-place="closing"
+            data-umami-event-item="npm install pipelino"
+          >
             <span aria-hidden="true">$</span><code>npm install pipelino</code><svg class="icon" aria-hidden="true"><use href="#icon-copy" /></svg
             ><span class="copy-feedback" aria-hidden="true">Copied</span></button
-          ><a class="button primary" href="https://github.com/smart-byte/pipelino#quick-start"
+          ><a
+            class="button primary"
+            href="https://github.com/smart-byte/pipelino#quick-start"
+            data-umami-event="outbound"
+            data-umami-event-place="closing"
+            data-umami-event-to="docs"
             >Read the docs<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
           ></a>
         </div>
@@ -577,9 +618,11 @@ pipeline.<span class="fn">push</span>(photos);</code></pre>
         ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>pipelino<span class="brand-dot">.</span></a
       >
       <nav aria-label="Footer navigation">
-        <a href="https://github.com/smart-byte/pipelino">GitHub</a><a href="https://www.npmjs.com/package/pipelino">npm</a
+        <a href="https://github.com/smart-byte/pipelino" data-umami-event="outbound" data-umami-event-place="footer" data-umami-event-to="github">GitHub</a
+        ><a href="https://www.npmjs.com/package/pipelino" data-umami-event="outbound" data-umami-event-place="footer" data-umami-event-to="npm">npm</a
         ><a href="https://github.com/smart-byte/pipelino/blob/main/CHANGELOG.md">Changelog</a><a href="./llms.txt">llms.txt</a
-        ><a href="https://github.com/smart-byte/pipelino/blob/main/LICENSE">MIT license</a>
+        ><a href="https://github.com/smart-byte/pipelino/blob/main/LICENSE">MIT license</a><a href="./legal-notice.html">Legal notice</a
+        ><a href="./privacy.html">Privacy</a>
       </nav>
     </footer>
     <div class="sr-only" role="status" id="announcement"></div>

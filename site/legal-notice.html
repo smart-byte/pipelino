@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Legal notice (Impressum) — pipelino</title>
+    <meta name="description" content="Provider information for pipelino.dev under § 5 DDG." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Before first paint: the saved choice, else the system setting.
+      (() => {
+        let saved;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch {}
+        document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      })();
+    </script>
+    <link rel="stylesheet" href="/pipeline.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="./" aria-label="pipelino home"
+          ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>pipelino<span class="brand-dot">.</span></a
+        >
+      </div>
+    </header>
+    <main id="main" class="wrap">
+      <article class="legal">
+        <h1>Legal notice</h1>
+        <p>pipelino and pipelino.dev are provided by:</p>
+        <address>
+          <strong>Smart-Byte GmbH</strong><br />
+          Landshuter Str. 29<br />
+          85435 Erding<br />
+          Germany
+        </address>
+        <p>Represented by its managing director, Mario Heubach.</p>
+        <p>
+          Phone: <a href="tel:+4981225676141">+49 8122 5676-141</a><br />
+          Email: <a href="mailto:info@smart-byte.com">info@smart-byte.com</a>
+        </p>
+        <p>Commercial register: Munich Local Court (Amtsgericht München), HRB 225435</p>
+        <p>VAT ID under §&nbsp;27a UStG: DE 305 932 873</p>
+        <p>How this site handles personal data is described in the <a href="./privacy.html">privacy policy</a>.</p>
+
+        <div lang="de">
+          <h2 id="impressum">Impressum</h2>
+          <p>Anbieter von pipelino und pipelino.dev gemäß §&nbsp;5 DDG:</p>
+          <address>
+            <strong>Smart-Byte GmbH</strong><br />
+            Landshuter Str. 29<br />
+            85435 Erding<br />
+            Deutschland
+          </address>
+          <p>Vertreten durch den Geschäftsführer Mario Heubach.</p>
+          <p>
+            Telefon: <a href="tel:+4981225676141">+49 8122 5676-141</a><br />
+            E-Mail: <a href="mailto:info@smart-byte.com">info@smart-byte.com</a>
+          </p>
+          <p>Handelsregister: Amtsgericht München, HRB 225435</p>
+          <p>Umsatzsteuer-Identifikationsnummer gemäß §&nbsp;27a UStG: DE 305 932 873</p>
+        </div>
+      </article>
+    </main>
+    <footer class="wrap">
+      <a class="brand" href="./"
+        ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>pipelino<span class="brand-dot">.</span></a
+      >
+      <nav aria-label="Footer navigation">
+        <a href="https://github.com/smart-byte/pipelino">GitHub</a><a href="https://www.npmjs.com/package/pipelino">npm</a
+        ><a href="./legal-notice.html">Legal notice</a><a href="./privacy.html">Privacy</a>
+      </nav>
+    </footer>
+  </body>
+</html>
