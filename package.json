@@ -1,0 +1,73 @@
+{
+  "name": "pipelino",
+  "version": "0.1.0",
+  "description": "Tiny, dependency-free staged processing pipeline for the browser and Node: streaming or barrier stages, batching, concurrency, pause/resume/cancel, live progress.",
+  "keywords": [
+    "pipeline",
+    "queue",
+    "task-queue",
+    "async",
+    "concurrency",
+    "batching",
+    "stages",
+    "progress",
+    "abort",
+    "browser",
+    "typescript",
+    "zero-dependencies"
+  ],
+  "license": "MIT",
+  "author": "Smart-Byte GmbH",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smart-byte/pipelino.git"
+  },
+  "homepage": "https://github.com/smart-byte/pipelino#readme",
+  "bugs": {
+    "url": "https://github.com/smart-byte/pipelino/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.spec.ts",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit",
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
+    "bench": "npm run build && node bench/run.mjs",
+    "prepublishOnly": "npm run lint && npm run type-check && npm test && npm run build",
+    "site": "vite site --port 4320 --open",
+    "site:build": "vite build site --outDir ../site-dist --base ./ --emptyOutDir && cp README.md site-dist/llms-full.txt"
+  },
+  "devDependencies": {
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/schibsted-grotesk": "5.3.0",
+    "async": "^3.2.6",
+    "esbuild": "^0.28.2",
+    "fastq": "^1.20.3",
+    "p-limit": "^7.3.2",
+    "p-queue": "^9.3.3",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}
