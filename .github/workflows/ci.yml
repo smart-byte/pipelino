@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [18, 20, 22, 24, 26]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - run: bun install --frozen-lockfile
+      - run: npm run build
+      - run: node bench/smoke.mjs
+      # Vitest 5 and Vite 8 need Node 22.12: older versions only prove above that the build runs on them.
+      - if: matrix.node >= 22
+        run: npm run lint && npm run type-check && npm test && npm run site:build
