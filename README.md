@@ -7,6 +7,8 @@ progress. Zero dependencies, 2.6 KB gzipped.
 [![CI](https://github.com/smart-byte/pipelino/actions/workflows/ci.yml/badge.svg)](https://github.com/smart-byte/pipelino/actions/workflows/ci.yml)
 [![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+**[Live demo at pipelino.dev](https://pipelino.dev)**
+
 ```bash
 npm install pipelino
 ```

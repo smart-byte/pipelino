@@ -22,7 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/smart-byte/pipelino.git"
   },
-  "homepage": "https://github.com/smart-byte/pipelino#readme",
+  "homepage": "https://pipelino.dev",
   "bugs": {
     "url": "https://github.com/smart-byte/pipelino/issues"
   },

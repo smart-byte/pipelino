@@ -1,0 +1,8 @@
+// The Cloudflare Worker that serves the built site: static files only, no script.
+// Deployed by .github/workflows/deploy-site.yml; `custom_domain` attaches pipelino.dev (DNS record and certificate) on deploy.
+{
+  "name": "pipelino-site",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "../site-dist" },
+  "routes": [{ "pattern": "pipelino.dev", "custom_domain": true }],
+}
