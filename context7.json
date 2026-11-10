@@ -1,0 +1,18 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "pipelino",
+  "description": "A staged pipeline for async work in the browser and Node: per-stage concurrency, batching, pause and cancel, live progress.",
+  "excludeFolders": ["src", "bench", "site", "dist"],
+  "excludeFiles": ["CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md"],
+  "rules": [
+    "Every item needs a unique string id. push() throws for an item without one and ignores an id that is already queued or running.",
+    "Return an object from run() to merge its fields into the item, or return nothing. Returning a string, an array or a number fails the item.",
+    "A batch stage uses batch plus runBatch(items, ctx). Return one patch per item in the same order, or nothing.",
+    "Pass ctx.signal to fetch and workers so cancel() stops work in flight. Cancelled runs keep their concurrency slot until they settle.",
+    "Use barrier: true on a stage that must wait until every item has finished the earlier stages.",
+    "Subscribe with on(event, listener) and keep the returned function to unsubscribe. There is no off().",
+    "Failed items are not retried. Push a failed item again to re-run it from the start, or with { startAt } to enter at a later stage.",
+    "Throttle 'progress' listeners with requestAnimationFrame before painting. progress() is always current.",
+    "pipelino is ESM only. TypeScript projects need the DOM lib or @types/node for the AbortSignal type."
+  ]
+}
