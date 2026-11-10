@@ -1,0 +1,44 @@
+# pipelino
+
+> A staged pipeline for async work in the browser and Node: per-stage concurrency, batching by count and weight, pause and cancel, live progress. Zero dependencies, 2.6 KB gzipped. ESM only; runs in current browsers, Node 18+, Deno and Bun.
+
+Install with `npm install pipelino`.
+
+```ts
+import { createPipeline } from 'pipelino';
+
+const pipeline = createPipeline<Photo>({
+  stages: [
+    { name: 'inspect', concurrency: 8, run: async (photo) => ({ width: await readWidth(photo.file) }) },
+    { name: 'thumbnail', concurrency: 4, run: async (photo) => ({ thumb: await makeThumb(photo.file) }) },
+    {
+      name: 'upload',
+      barrier: true, // start only once every photo has its thumbnail
+      batch: { size: 10 },
+      runBatch: (photos, { signal }) => upload(photos, signal),
+    },
+  ],
+});
+
+pipeline.on('progress', ({ overall }) => render(overall.percent));
+pipeline.on('done', ({ done, failed }) => console.log(done.length, failed.length));
+pipeline.push(photos); // any objects with a unique string `id`
+```
+
+- Every item needs a unique string `id`; `push()` throws for an item without one.
+- A stage returns an object whose fields are merged into the item, or nothing. A string, array or number fails the item.
+- A batch stage uses `batch` with `runBatch(items, ctx)` and returns one patch per item in the same order, or nothing.
+- Pass `ctx.signal` to `fetch` and workers so `cancel()` stops work that is in flight.
+- A stage that throws fails only that item: it skips the remaining stages and is listed in `done.failed`. Nothing is retried; push a failed item again to re-run it.
+- `on()` returns the unsubscribe function; there is no `off()`.
+
+## Docs
+
+- [Full documentation](llms-full.txt): every stage field, method and event, and the exact rules for ordering, failures, batching, pause and cancel
+- [Benchmarks](https://github.com/smart-byte/pipelino/blob/main/BENCHMARKS.md): method and results
+- [Changelog](https://github.com/smart-byte/pipelino/blob/main/CHANGELOG.md)
+
+## Optional
+
+- [Source on GitHub](https://github.com/smart-byte/pipelino)
+- [Package on npm](https://www.npmjs.com/package/pipelino)

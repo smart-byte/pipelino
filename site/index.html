@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pipelino — staged pipelines for async work</title>
+    <meta
+      name="description"
+      content="A staged processing pipeline for the browser and Node: per-stage concurrency, batching, pause and cancel, live progress. Zero dependencies, 2.6 kB gzipped."
+    />
+    <meta name="theme-color" content="#f8f9f5" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="pipelino — Give your async work a sense of flow." />
+    <meta
+      property="og:description"
+      content="A staged processing pipeline for the browser and Node: per-stage concurrency, batching, pause and cancel, live progress. Zero dependencies."
+    />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="text/markdown" href="/llms.txt" title="pipelino for AI agents" />
+    <script>
+      // Before first paint: the saved choice, else the system setting.
+      (() => {
+        let saved;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch {}
+        document.documentElement.dataset.theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      })();
+    </script>
+    <link rel="stylesheet" href="/pipeline.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5" /></symbol>
+        <symbol id="icon-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7Z" /></symbol>
+        <symbol id="icon-image" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="3" />
+          <circle cx="8" cy="8" r="1.5" />
+          <path d="m3 17 5-5 4 4 4-6 5 7" />
+        </symbol>
+        <symbol id="icon-scan" viewBox="0 0 24 24">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m13-5v3a2 2 0 0 1-2 2h-3M7 9h10M7 13h10M7 17h4" />
+        </symbol>
+        <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" /></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
+        <symbol id="icon-copy" viewBox="0 0 24 24">
+          <rect x="8" y="8" width="12" height="12" rx="2" />
+          <path d="M15 8V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h4" />
+        </symbol>
+        <symbol id="icon-sun" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" />
+        </symbol>
+        <symbol id="icon-moon" viewBox="0 0 24 24">
+          <path d="M20.5 13.5A8.5 8.5 0 1 1 10.5 3.5a7.5 7.5 0 0 0 10 10z" />
+        </symbol>
+        <symbol id="icon-github" viewBox="0 0 24 24">
+          <path
+            d="M9 19c-4.3 1.3-4.3-2.2-6-2.7m12 5v-3.3a2.9 2.9 0 0 0-.8-2.2c2.7-.3 5.6-1.3 5.6-6A4.7 4.7 0 0 0 18.5 6a4.3 4.3 0 0 0-.1-3.2S17.4 2.5 15 4a12 12 0 0 0-6 0C6.6 2.5 5.6 2.8 5.6 2.8A4.3 4.3 0 0 0 5.5 6a4.7 4.7 0 0 0-1.3 3.8c0 4.7 2.9 5.7 5.6 6a2.9 2.9 0 0 0-.8 2.2v3.3"
+          />
+        </symbol>
+      </defs>
+    </svg>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="#top" aria-label="pipelino home"
+          ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>pipelino<span class="brand-dot">.</span></a
+        >
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#demo">Demo</a><a href="#quick-start">Quick start</a><a href="#features">Features</a><a href="#compare">Compare</a
+          ><a href="#benchmark">Benchmark</a><a href="#api">API</a>
+        </nav>
+        <div class="nav-actions">
+          <button type="button" class="button secondary small icon-button" id="theme-toggle" aria-label="Dark theme" aria-pressed="false" title="Switch theme">
+            <svg class="icon icon-moon" aria-hidden="true"><use href="#icon-moon" /></svg
+            ><svg class="icon icon-sun" aria-hidden="true"><use href="#icon-sun" /></svg>
+          </button>
+          <a href="https://github.com/smart-byte/pipelino" class="button secondary small" aria-label="pipelino on GitHub"
+            ><svg class="icon" aria-hidden="true"><use href="#icon-github" /></svg><span>GitHub</span></a
+          >
+        </div>
+      </div>
+    </header>
+    <main id="main">
+      <section class="hero wrap" id="top" aria-labelledby="hero-title">
+        <h1 id="hero-title">
+          Give your async work a sense of
+          <span
+            >flow<svg viewBox="0 0 250 16" preserveAspectRatio="none" aria-hidden="true"><path d="M3 12C55 1 155 1 247 9" /></svg>.</span
+          >
+        </h1>
+        <p class="hero-lead">
+          <span>A staged pipeline for async work, in the browser and in Node.</span>
+          <span>You write the stages; pipelino moves every item through them.</span>
+        </p>
+        <div class="actions">
+          <a href="#quick-start" class="button primary"
+            >Get started<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg></a
+          ><button type="button" class="install" data-copy="npm install pipelino" aria-label="Copy npm install pipelino">
+            <span aria-hidden="true">$</span><code>npm install pipelino</code><svg class="icon" aria-hidden="true"><use href="#icon-copy" /></svg
+            ><span class="copy-feedback" aria-hidden="true">Copied</span>
+          </button>
+        </div>
+        <ul class="facts">
+          <li>Zero dependencies</li>
+          <li>2.6 kB gzipped</li>
+          <li>TypeScript types</li>
+          <li>MIT license</li>
+        </ul>
+      </section>
+
+      <section class="wrap" id="demo" aria-labelledby="demo-title">
+        <div class="section-head">
+          <h2 id="demo-title">Watch a pipeline run</h2>
+          <p><span>24 photos move through three stages.</span> <span>The scheduler is the real library; only the work is simulated.</span></p>
+        </div>
+        <div class="demo" id="pipeline-demo" data-status="idle" data-mode="barrier">
+          <div class="demo-bar">
+            <div class="demo-mode">
+              <div class="segmented mode-control" role="group" aria-label="Upload scheduling mode">
+                <button type="button" data-mode="streaming" aria-pressed="false">Streaming</button
+                ><button type="button" class="active" data-mode="barrier" aria-pressed="true">Barrier</button>
+              </div>
+              <p id="mode-description">Upload waits until every thumbnail exists.</p>
+            </div>
+            <div class="run-controls">
+              <button type="button" class="text-button" id="reset" disabled>Reset</button
+              ><button type="button" class="button secondary" id="pause" disabled>Pause</button
+              ><button type="button" class="button primary" id="run">
+                <svg class="icon" aria-hidden="true"><use href="#icon-play" /></svg><span>Run</span>
+              </button>
+            </div>
+          </div>
+          <div class="canvas">
+            <div class="pipeline-graph" id="pipeline-graph">
+              <svg class="connections" aria-hidden="true"><g id="connection-paths"></g></svg>
+              <div class="endpoint" id="input-node">
+                <div class="endpoint-icon">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-image" /></svg>
+                </div>
+                <strong>24 photos</strong><span>Ready</span>
+              </div>
+              <article class="stage-card" id="inspect-node">
+                <div class="stage-heading">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-scan" /></svg>
+                  <h3>Inspect</h3>
+                </div>
+                <div class="stage-config">concurrency: 4</div>
+                <div class="item-grid" aria-hidden="true"></div>
+                <div class="stage-progress">
+                  <span class="stage-state">Ready</span><span><b class="stage-done">0</b> / 24</span>
+                </div>
+                <div class="progress-track"><i></i></div>
+              </article>
+              <article class="stage-card" id="thumbnail-node">
+                <div class="stage-heading">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-image" /></svg>
+                  <h3>Thumbnail</h3>
+                </div>
+                <div class="stage-config">concurrency: 3</div>
+                <div class="item-grid" aria-hidden="true"></div>
+                <div class="stage-progress">
+                  <span class="stage-state">Ready</span><span><b class="stage-done">0</b> / 24</span>
+                </div>
+                <div class="progress-track"><i></i></div>
+              </article>
+              <article class="stage-card" id="upload-node">
+                <div class="stage-heading">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-upload" /></svg>
+                  <h3>Upload</h3>
+                  <span class="stage-tag" id="barrier-tag">barrier</span>
+                </div>
+                <div class="stage-config">batch: 6, concurrency: 2</div>
+                <div class="item-grid" aria-hidden="true"></div>
+                <div class="stage-progress">
+                  <span class="stage-state">Ready</span><span><b class="stage-done">0</b> / 24</span>
+                </div>
+                <div class="progress-track"><i></i></div>
+              </article>
+              <div class="endpoint" id="output-node">
+                <div class="output-ring" id="output-ring">
+                  <svg class="icon" aria-hidden="true"><use href="#icon-check" /></svg>
+                </div>
+                <strong><span id="output-count">0</span> uploaded</strong><span id="output-caption">0%</span>
+              </div>
+            </div>
+            <div class="canvas-foot">
+              <div class="legend" aria-label="Item states">
+                <span><i class="queued"></i>Queued</span><span><i class="running"></i>Running</span><span><i class="done"></i>Done</span>
+              </div>
+            </div>
+          </div>
+          <div class="demo-console">
+            <span aria-hidden="true">›</span><code id="demo-log">pipeline.push(photos)</code><span id="demo-status" role="status">Ready</span
+            ><span id="elapsed">0.0s</span>
+          </div>
+          <noscript><p class="demo-message">The demo needs JavaScript.</p></noscript>
+        </div>
+      </section>
+
+      <section class="section wrap" id="quick-start" aria-labelledby="quick-start-title">
+        <div class="section-head">
+          <h2 id="quick-start-title">Quick start</h2>
+          <p><span>One object describes the whole flow.</span> <span>Push items and listen for progress.</span></p>
+        </div>
+        <div class="split">
+          <div class="code-window">
+            <div class="code-toolbar">
+              <span>upload.ts</span
+              ><button type="button" id="copy-code" aria-label="Copy the example">
+                <svg class="icon" aria-hidden="true"><use href="#icon-copy" /></svg><span>Copy</span>
+              </button>
+            </div>
+            <pre
+              class="code"
+              tabindex="0"
+              aria-label="TypeScript example"
+            ><code id="pipeline-example"><span class="k">import</span> { createPipeline } <span class="k">from</span> <span class="s">'pipelino'</span>;
+
+<span class="k">const</span> pipeline = <span class="fn">createPipeline</span>&lt;Photo&gt;({
+  stages: [
+    { name: <span class="s">'inspect'</span>, concurrency: <span class="n">4</span>, run: inspect },
+    { name: <span class="s">'thumbnail'</span>, concurrency: <span class="n">3</span>, run: thumbnail },
+    {
+      name: <span class="s">'upload'</span>,
+      barrier: <span class="k" id="example-barrier">true</span>,
+      batch: { size: <span class="n">6</span> },
+      runBatch: (photos, ctx) =&gt; <span class="fn">upload</span>(photos, ctx.signal),
+    },
+  ],
+});
+
+pipeline.<span class="fn">on</span>(<span class="s">'progress'</span>, (p) =&gt; <span class="fn">render</span>(p.overall.percent));
+pipeline.<span class="fn">on</span>(<span class="s">'done'</span>, ({ failed }) =&gt; <span class="fn">report</span>(failed));
+pipeline.<span class="fn">push</span>(photos);</code></pre>
+          </div>
+          <ol class="principles">
+            <li>
+              <h3>Stages, not queues</h3>
+              <p>Items move from stage to stage on their own. You never hand them from one queue to the next.</p>
+            </li>
+            <li>
+              <h3>Results merge into the item</h3>
+              <p>Return an object from a stage and its fields are assigned to the item. There is no second data structure to keep in sync.</p>
+            </li>
+            <li>
+              <h3>Streaming by default</h3>
+              <p>
+                An item enters the next stage the moment it leaves the previous one. <code>barrier: true</code> holds a stage until every item has caught up.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section wrap" id="features" aria-labelledby="features-title">
+        <div class="section-head">
+          <h2 id="features-title">Features</h2>
+          <p><span>The parts of a multi-step flow you would otherwise write by hand.</span></p>
+        </div>
+        <div class="feature-list">
+          <div>
+            <h3>Barrier stages</h3>
+            <p>Hold a stage until no item is still behind it: upload only once every thumbnail exists.</p>
+            <code>barrier: true</code>
+          </div>
+          <div>
+            <h3>Batching by count and weight</h3>
+            <p>Group ready items by count and by a weight such as bytes. A batch never waits to fill up.</p>
+            <code>batch: { size, weight, weigh }</code>
+          </div>
+          <div>
+            <h3>Pause, resume, cancel</h3>
+            <p>Pausing lets running work finish. Cancelling aborts the <code>AbortSignal</code> every stage receives.</p>
+            <code>pause() · resume() · cancel()</code>
+          </div>
+          <div>
+            <h3>Live progress</h3>
+            <p>Done, failed and running counts per stage and overall, kept current without scanning the items.</p>
+            <code>on('progress', render)</code>
+          </div>
+          <div>
+            <h3>Isolated failures</h3>
+            <p>A stage that throws fails only that item. It skips the remaining stages; the others keep moving.</p>
+            <code>on('stage:error', handle)</code>
+          </div>
+          <div>
+            <h3>Changes while it runs</h3>
+            <p>Push more items, enter them mid-pipeline, skip a stage per item, or append stages later.</p>
+            <code>push(items, { startAt }) · addStages()</code>
+          </div>
+        </div>
+      </section>
+
+      <section class="section wrap" id="compare" aria-labelledby="compare-title">
+        <div class="section-head">
+          <h2 id="compare-title">Compared with queues</h2>
+          <p><span>A queue limits concurrency for one kind of task.</span> <span>pipelino adds the stages, batching and bookkeeping around it.</span></p>
+        </div>
+        <div class="compare" tabindex="0" role="region" aria-label="Library comparison; scroll sideways for all columns">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Capability</th>
+                <th scope="col" class="us">pipelino</th>
+                <th scope="col">p-queue</th>
+                <th scope="col">fastq</th>
+                <th scope="col">async.queue</th>
+                <th scope="col">p-limit</th>
+                <th scope="col">RxJS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Several stages in one object</th>
+                <td class="us yes">✓</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td>operators</td>
+              </tr>
+              <tr>
+                <th scope="row">Barrier stages</th>
+                <td class="us yes">✓</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td>manual</td>
+              </tr>
+              <tr>
+                <th scope="row">Batching by count</th>
+                <td class="us yes">✓</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td>cargo</td>
+                <td class="no">–</td>
+                <td>bufferCount</td>
+              </tr>
+              <tr>
+                <th scope="row">Batching by weight (bytes)</th>
+                <td class="us yes">✓</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td>manual</td>
+              </tr>
+              <tr>
+                <th scope="row">Concurrency per stage</th>
+                <td class="us yes">✓</td>
+                <td>per queue</td>
+                <td>per queue</td>
+                <td>per queue</td>
+                <td>per limit</td>
+                <td>mergeMap</td>
+              </tr>
+              <tr>
+                <th scope="row">Pause and resume</th>
+                <td class="us yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="yes">✓</td>
+                <td class="no">–</td>
+                <td>manual</td>
+              </tr>
+              <tr>
+                <th scope="row">Cancel with an AbortSignal</th>
+                <td class="us yes">✓</td>
+                <td>clear, own signal</td>
+                <td>kill</td>
+                <td>kill</td>
+                <td class="no">–</td>
+                <td>unsubscribe</td>
+              </tr>
+              <tr>
+                <th scope="row">Skip, enter mid-flow, add stages</th>
+                <td class="us yes">✓</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+                <td class="no">–</td>
+              </tr>
+              <tr>
+                <th scope="row">Results merged into items</th>
+                <td class="us yes">✓</td>
+                <td>promise per task</td>
+                <td>callback</td>
+                <td>callback</td>
+                <td>promise per task</td>
+                <td>stream</td>
+              </tr>
+              <tr>
+                <th scope="row">Progress per stage and overall</th>
+                <td class="us yes">✓</td>
+                <td>counters</td>
+                <td>counters</td>
+                <td>counters</td>
+                <td>counters</td>
+                <td>manual</td>
+              </tr>
+              <tr>
+                <th scope="row">Runtime dependencies</th>
+                <td class="us num">0</td>
+                <td class="num">2</td>
+                <td class="num">1</td>
+                <td class="num">0</td>
+                <td class="num">1</td>
+                <td class="num">1</td>
+              </tr>
+              <tr>
+                <th scope="row">Minified and gzipped</th>
+                <td class="us num">2.6 kB</td>
+                <td class="num">4.4 kB</td>
+                <td class="num">1.2 kB</td>
+                <td class="num">8.1 kB</td>
+                <td class="num">0.9 kB</td>
+                <td class="num">~18 kB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="footnote">
+          p-queue 9.3.3, fastq 1.20.3, async 3.2.6 (whole library), p-limit 7.3.2. Sizes are esbuild bundles with dependencies, gzip -9; RxJS is an estimate for
+          a typical set of operators. fastq and p-limit are smaller because they do less.
+        </p>
+      </section>
+
+      <section class="section wrap" id="benchmark" aria-labelledby="benchmark-title">
+        <div class="split benchmark">
+          <div class="section-head">
+            <h2 id="benchmark-title">60,000 stage runs in 10 ms</h2>
+            <p><span>20,000 items through three no-op stages.</span> <span>The scheduler is never the bottleneck.</span></p>
+            <a href="https://github.com/smart-byte/pipelino/blob/main/BENCHMARKS.md" class="text-link"
+              >Method and full results<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
+            ></a>
+          </div>
+          <figure class="chart">
+            <figcaption>Time to move 20,000 items through 3 stages, concurrency 8</figcaption>
+            <div class="chart-row ours">
+              <span>pipelino</span><b>10 ms</b>
+              <span class="track"><i style="--value: 25.6%"></i></span>
+            </div>
+            <div class="chart-row">
+              <span>async.queue, one per stage</span><b>16 ms</b>
+              <span class="track"><i style="--value: 41%"></i></span>
+            </div>
+            <div class="chart-row">
+              <span>fastq, one per stage</span><b>19 ms</b>
+              <span class="track"><i style="--value: 48.7%"></i></span>
+            </div>
+            <div class="chart-row">
+              <span>p-limit, one per stage</span><b>30 ms</b>
+              <span class="track"><i style="--value: 76.9%"></i></span>
+            </div>
+            <div class="chart-row">
+              <span>p-queue, one per stage</span><b>39 ms</b>
+              <span class="track"><i style="--value: 100%"></i></span>
+            </div>
+            <p class="footnote">Node 22, Apple M3 Max, median of 7 runs, September 2026. Recorded results, not measured live.</p>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section wrap" id="api" aria-labelledby="api-title">
+        <div class="section-head">
+          <h2 id="api-title">API</h2>
+          <p><span>One function, one object.</span> <span>Everything is typed over your item type.</span></p>
+        </div>
+        <dl class="api-list">
+          <div>
+            <dt><code>createPipeline({ stages })</code></dt>
+            <dd>
+              A stage has a <code>name</code>, <code>run</code> or <code>batch</code> with <code>runBatch</code>, and optionally <code>concurrency</code>,
+              <code>barrier</code> and <code>skip</code>.
+            </dd>
+          </div>
+          <div>
+            <dt><code>push(items, { startAt? })</code></dt>
+            <dd>Queues items and returns how many were added. Ids already queued or running are ignored.</dd>
+          </div>
+          <div>
+            <dt><code>remove(ids)</code></dt>
+            <dd>Drops queued, running or finished items.</dd>
+          </div>
+          <div>
+            <dt><code>addStages(stages)</code></dt>
+            <dd>Appends stages. Finished items re-enter at the first new one.</dd>
+          </div>
+          <div>
+            <dt><code>pause()</code> and <code>resume()</code></dt>
+            <dd>Stop and continue scheduling. Running work finishes.</dd>
+          </div>
+          <div>
+            <dt><code>cancel()</code> and <code>reset()</code></dt>
+            <dd>Abort the signal and drop unfinished items. <code>reset()</code> also forgets the finished ones.</dd>
+          </div>
+          <div>
+            <dt><code>progress()</code></dt>
+            <dd>Done, failed, running, total and percent, overall and per stage.</dd>
+          </div>
+          <div>
+            <dt><code>items()</code></dt>
+            <dd>A snapshot per item: its state, current stage and error.</dd>
+          </div>
+          <div>
+            <dt><code>on(event, listener)</code></dt>
+            <dd>
+              <code>stage:done</code>, <code>stage:error</code>, <code>item:done</code>, <code>progress</code>, <code>status</code> and <code>done</code>.
+              Returns the unsubscribe function.
+            </dd>
+          </div>
+          <div>
+            <dt><code>status</code></dt>
+            <dd><code>'idle'</code>, <code>'running'</code> or <code>'paused'</code>.</dd>
+          </div>
+        </dl>
+        <p class="footnote"><a href="https://github.com/smart-byte/pipelino#api">Full reference</a></p>
+      </section>
+
+      <section class="section wrap" id="faq" aria-labelledby="faq-title">
+        <div class="section-head">
+          <h2 id="faq-title">Questions</h2>
+        </div>
+        <div class="faq">
+          <div>
+            <h3>Where does it run?</h3>
+            <p>In current browsers, Node 18 and later, Deno and Bun. It ships as ES2022 modules and has no dependencies.</p>
+          </div>
+          <div>
+            <h3>What happens when a stage throws?</h3>
+            <p>That item is marked failed, skips the remaining stages and is listed in <code>done.failed</code>. Other items are not affected.</p>
+          </div>
+          <div>
+            <h3>Can I add items while it runs?</h3>
+            <p>Yes. <code>push()</code> works at any time, and <code>done</code> fires again once the new items have settled.</p>
+          </div>
+          <div>
+            <h3>Does it retry failed items?</h3>
+            <p>Not on its own. Push a failed item again and it runs from the first stage, or from a later one with <code>startAt</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="pair wrap" aria-labelledby="pair-title">
+        <span class="pair-mark" aria-hidden="true"
+          ><svg class="icon"><use href="#icon-image" /></svg
+        ></span>
+        <div>
+          <h2 id="pair-title">Pairs with imagefast</h2>
+          <p>Read dimensions and make thumbnails on a worker pool in the browser, then let pipelino batch the uploads.</p>
+        </div>
+        <a href="https://imagefast.dev" class="button secondary"
+          >Meet imagefast<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
+        ></a>
+      </section>
+
+      <section class="closing wrap" aria-labelledby="closing-title">
+        <h2 id="closing-title">Add it to your app</h2>
+        <div class="actions">
+          <button type="button" class="install" data-copy="npm install pipelino" aria-label="Copy npm install pipelino">
+            <span aria-hidden="true">$</span><code>npm install pipelino</code><svg class="icon" aria-hidden="true"><use href="#icon-copy" /></svg
+            ><span class="copy-feedback" aria-hidden="true">Copied</span></button
+          ><a class="button primary" href="https://github.com/smart-byte/pipelino#quick-start"
+            >Read the docs<svg class="icon" aria-hidden="true"><use href="#icon-arrow" /></svg
+          ></a>
+        </div>
+      </section>
+    </main>
+    <footer class="wrap">
+      <a class="brand" href="#top"
+        ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>pipelino<span class="brand-dot">.</span></a
+      >
+      <nav aria-label="Footer navigation">
+        <a href="https://github.com/smart-byte/pipelino">GitHub</a><a href="https://www.npmjs.com/package/pipelino">npm</a
+        ><a href="https://github.com/smart-byte/pipelino/blob/main/CHANGELOG.md">Changelog</a><a href="./llms.txt">llms.txt</a
+        ><a href="https://github.com/smart-byte/pipelino/blob/main/LICENSE">MIT license</a>
+      </nav>
+    </footer>
+    <div class="sr-only" role="status" id="announcement"></div>
+    <script type="module" src="/pipeline-demo.js"></script>
+  </body>
+</html>
