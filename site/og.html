@@ -1,0 +1,180 @@
+<!doctype html>
+<!-- Source of public/og.png, the link preview image. Not part of the built site: open it at 1200×630 and take a screenshot at 2× to regenerate. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>pipelino link preview</title>
+    <link rel="stylesheet" href="../node_modules/@fontsource-variable/schibsted-grotesk/index.css" />
+    <link rel="stylesheet" href="../node_modules/@fontsource-variable/jetbrains-mono/index.css" />
+    <style>
+      :root {
+        --bg: #f8f9f5;
+        --surface: #fff;
+        --tint: #eff3e9;
+        --ink: #1f2623;
+        --text: #414b44;
+        --muted: #647064;
+        --line: #e1e6d9;
+        --dot: #cbd4bf;
+        --bar: #b4c0a8;
+        --accent: #e86635;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 56px;
+        align-items: center;
+        padding: 64px 72px;
+        background:
+          radial-gradient(var(--dot) 1.2px, transparent 1.2px) 0 0 / 28px 28px,
+          var(--bg);
+        color: var(--text);
+        font:
+          24px/1.45 'Schibsted Grotesk Variable',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .copy {
+        display: grid;
+        gap: 30px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        color: var(--ink);
+        font-size: 38px;
+        font-weight: 700;
+        letter-spacing: -0.06em;
+        line-height: 1;
+      }
+      .mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 38px;
+        margin-right: 14px;
+        transform: skewY(-13deg);
+      }
+      .mark i {
+        width: 10px;
+        height: 22px;
+        border-radius: 3px;
+        background: var(--accent);
+      }
+      .mark i:nth-child(2) {
+        height: 36px;
+      }
+      .mark i:nth-child(3) {
+        height: 28px;
+      }
+      .brand b,
+      h1 span {
+        color: var(--accent);
+      }
+      h1 {
+        color: var(--ink);
+        font-size: 84px;
+        font-weight: 600;
+        line-height: 1.02;
+        letter-spacing: -0.055em;
+      }
+      h1 span {
+        position: relative;
+        display: inline-block;
+      }
+      h1 svg {
+        position: absolute;
+        left: 0;
+        bottom: -0.1em;
+        width: 97%;
+        height: 0.16em;
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 3;
+        stroke-linecap: round;
+      }
+      .facts {
+        font:
+          500 19px/1 'JetBrains Mono Variable',
+          monospace;
+        color: var(--muted);
+      }
+      figure {
+        display: grid;
+        gap: 14px;
+        padding: 30px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow:
+          0 1px 2px #2b3a240a,
+          0 28px 56px -30px #2b3a2459;
+      }
+      figcaption {
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 19px;
+      }
+      .stage {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px 16px;
+        align-items: baseline;
+        padding: 16px 18px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        color: var(--ink);
+        font-size: 21px;
+      }
+      .stage b {
+        color: var(--muted);
+        font:
+          500 17px 'JetBrains Mono Variable',
+          monospace;
+      }
+      .stage i {
+        grid-column: 1 / -1;
+        height: 10px;
+        border-radius: 5px;
+        background: linear-gradient(to right, var(--accent) var(--value), var(--tint) 0);
+      }
+      .arrow {
+        justify-self: center;
+        width: 2px;
+        height: 14px;
+        margin-block: -6px;
+        background: var(--bar);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="copy">
+      <div class="brand">
+        <span class="mark"><i></i><i></i><i></i></span><span>pipelino<b>.</b></span>
+      </div>
+      <h1>
+        Give your async work a sense of
+        <span
+          >flow<svg viewBox="0 0 250 16" preserveAspectRatio="none"><path d="M3 12C55 1 155 1 247 9" /></svg></span
+        >.
+      </h1>
+      <p>A staged pipeline for the browser and Node.</p>
+      <p class="facts">2.6 kB gzipped · zero dependencies</p>
+    </div>
+    <figure>
+      <figcaption>24 photos, three stages</figcaption>
+      <div class="stage"><span>inspect</span><b>24 / 24</b><i style="--value: 100%"></i></div>
+      <span class="arrow"></span>
+      <div class="stage"><span>thumbnail</span><b>17 / 24</b><i style="--value: 71%"></i></div>
+      <span class="arrow"></span>
+      <div class="stage"><span>upload</span><b>batch 1 of 3</b><i style="--value: 22%"></i></div>
+    </figure>
+  </body>
+</html>
