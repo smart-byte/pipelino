@@ -25,6 +25,17 @@ npm run site:build   # bundle the landing page into site-dist/
 - Run `npm run lint && npm run type-check && npm test` before pushing; CI runs the same on Node 22, 24 and 26,
   and runs the build (`node bench/smoke.mjs`) on Node 18 and 20.
 
+## Releasing
+
+For maintainers. Pushing a version tag publishes to npm:
+
+1. In one commit, set `version` in `package.json` and put the date on that version's section in `CHANGELOG.md`.
+2. Tag that commit and push both: `git tag v0.2.0 && git push origin main v0.2.0`.
+
+`.github/workflows/release.yml` then checks that the tag, `package.json` and the changelog agree, runs the tests,
+publishes with provenance and creates the GitHub release from the changelog section. npm trusts that workflow directly
+(trusted publishing), so no token is stored anywhere.
+
 ## Reporting bugs
 
 Open an issue with a minimal `createPipeline` snippet that reproduces it. Stage definitions plus the
